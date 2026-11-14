@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   discover-report:
@@ -25,3 +25,16 @@ jobs:
 
       - name: Discover DOE reports
         run: python discover_doe_report.py
+      
+      - name: Publish latest report JSON
+        run: |
+          test -s latest_report.json
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add latest_report.json
+          if git diff --cached --quiet; then
+            echo "No new report changes."
+          else
+            git commit -m "Update latest DOE report"
+            git push
+          fi
