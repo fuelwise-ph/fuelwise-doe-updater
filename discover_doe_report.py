@@ -33,6 +33,46 @@ for report in reports[:20]:
 
 print("\nTotal reports detected:", len(reports))
 
+from datetime import datetime
+import re
+
+dated_reports = []
+
+for report in reports:
+    decoded = unquote(report)
+
+    match = re.search(
+        r"(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})",
+        decoded
+    )
+
+    if match:
+        try:
+            day, month, year = match.groups()
+
+            report_date = datetime.strptime(
+                f"{day} {month[:3]} {year}",
+                "%d %b %Y"
+            )
+
+            dated_reports.append((report_date, report))
+
+        except ValueError:
+            continue
+
+if dated_reports:
+    latest_date, latest_url = max(
+        dated_reports,
+        key=lambda item: item[0]
+    )
+
+    print("\nLATEST DATED CALABARZON REPORT")
+    print("Period end:", latest_date.strftime("%Y-%m-%d"))
+    print("PDF URL:", latest_url)
+
+else:
+    print("WARNING: No dated reports found.")
+
 if not reports:
     raise RuntimeError("No CALABARZON reports detected.")
 
