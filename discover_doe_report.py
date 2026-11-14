@@ -70,6 +70,20 @@ if dated_reports:
     print("Period end:", latest_date.strftime("%Y-%m-%d"))
     print("PDF URL:", latest_url)
 
+    import json
+
+    report_data = {
+        "region": "CALABARZON",
+        "source": "Department of Energy",
+        "period_end": latest_date.strftime("%Y-%m-%d"),
+        "pdf_url": latest_url
+    }
+
+    with open("latest_report.json", "w") as file:
+        json.dump(report_data, file, indent=4)
+
+    print("JSON file created: latest_report.json")
+
 else:
     print("WARNING: No dated reports found.")
 
